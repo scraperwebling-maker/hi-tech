@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi Tech</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" onclick="showSection('catalog')">Hi Tech</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('cart')">Carrito (<span id="cart-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('admin')">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-4">
+        <!-- Sección Catálogo -->
+        <div id="catalog-section">
+            <section id="products">
+                <h2 class="mb-4">Productos (Teléfonos)</h2>
+                <div id="product-list" class="row g-4"></div>
+            </section>
+            <section id="services" class="mt-5">
+                <h2 class="mb-4">Servicios</h2>
+                <div id="service-list" class="row g-4"></div>
+            </section>
+        </div>
+
+        <!-- Sección Detalles -->
+        <div id="details-section" style="display:none;">
+            <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')">← Volver al catálogo</a>
+            <div id="details" class="card"></div>
+        </div>
+
+        <!-- Sección Carrito -->
+        <div id="cart-section" style="display:none;">
+            <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')">← Volver al catálogo</a>
+            <h2 class="mt-3">Carrito de Compras</h2>
+            <div id="cart-items" class="row g-4"></div>
+            <div id="cart-total" class="mt-4 text-end fs-4 fw-bold"></div>
+            <button id="buy-btn" class="btn btn-success btn-lg w-100 mt-3">Comprar por WhatsApp</button>
+        </div>
+
+        <!-- Sección Admin -->
+        <div id="admin-section" style="display:none;">
+            <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')">← Volver</a>
+            <div id="login-form">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h3 class="card-title">Iniciar Sesión Admin</h3>
+                        <input type="password" id="admin-pass" class="form-control mb-3" placeholder="Contraseña">
+                        <button id="login-btn" class="btn btn-primary w-100">Entrar</button>
+                    </div>
+                </div>
+            </div>
+            <div id="admin-panel" style="display:none;">
+                <h2 class="mt-4">Productos</h2>
+                <div id="admin-products" class="row g-4 mb-4"></div>
+                <button class="btn btn-info mb-5" data-bs-toggle="modal" data-bs-target="#addProductModal">Agregar Producto</button>
+                
+                <h2>Servicios</h2>
+                <div id="admin-services" class="row g-4 mb-4"></div>
+                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addServiceModal">Agregar Servicio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales Admin -->
+    <div class="modal fade" id="addProductModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5>Agregar Producto</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input id="new-prod-name" class="form-control mb-2" placeholder="Nombre">
+                    <input id="new-prod-price" type="number" step="0.01" class="form-control mb-2" placeholder="Precio">
+                    <textarea id="new-prod-desc" class="form-control mb-2" rows="2" placeholder="Descripción breve"></textarea>
+                    <textarea id="new-prod-details" class="form-control mb-2" rows="4" placeholder="Detalles completos"></textarea>
+                    <input type="file" id="new-prod-img" class="form-control mb-2" accept="image/*">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" onclick="addItem('products')" data-bs-dismiss="modal">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addServiceModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5>Agregar Servicio</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input id="new-serv-name" class="form-control mb-2" placeholder="Nombre">
+                    <input id="new-serv-price" type="number" step="0.01" class="form-control mb-2" placeholder="Precio">
+                    <textarea id="new-serv-desc" class="form-control mb-2" rows="2" placeholder="Descripción breve"></textarea>
+                    <textarea id="new-serv-details" class="form-control mb-2" rows="4" placeholder="Detalles completos"></textarea>
+                    <input type="file" id="new-serv-img" class="form-control mb-2" accept="image/*">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" onclick="addItem('services')" data-bs-dismiss="modal">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5>Editar Item</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input id="edit-name" class="form-control mb-2" placeholder="Nombre">
+                    <input id="edit-price" type="number" step="0.01" class="form-control mb-2" placeholder="Precio">
+                    <textarea id="edit-desc" class="form-control mb-2" rows="2" placeholder="Descripción breve"></textarea>
+                    <textarea id="edit-details" class="form-control mb-2" rows="4" placeholder="Detalles completos"></textarea>
+                    <input type="file" id="edit-img" class="form-control mb-2" accept="image/*">
+                    <small class="text-muted d-block mb-2">Deja vacío para mantener la imagen actual</small>
+                    <input type="hidden" id="edit-id">
+                    <input type="hidden" id="edit-table">
+                    <input type="hidden" id="edit-img-url">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" onclick="updateItem()" data-bs-dismiss="modal">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSS personalizado -->
+    <style>
+        body { background-color: #f8f9fa; padding-bottom: 50px; }
+        .navbar { box-shadow: 0 2px 4px rgba(0,0,0,.1); }
+        .card { border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,.15); }
+        .card-img-top { height: 220px; object-fit: cover; }
+        .spinner { text-align: center; padding: 40px 0; }
+        @media (max-width: 768px) {
+            .card-img-top { height: 180px; }
+            .modal-dialog { margin: 1rem; }
+        }
+        @media (max-width: 576px) {
+            .card-img-top { height: 150px; }
+            h2 { font-size: 1.5rem; }
+        }
+    </style>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://jpgzkdydzfofhjeerjan.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_uc10-Kc9N-VZJSMRvZVqIA_02vjn1S1';
+        const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpwZ3prZHlkemZvZmhqZWVyamFuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2Njk5NDIxNSwiZXhwIjoyMDgyNTcwMjE1fQ.CwRnzYFEjDKQ7lsxwHv9JPghHL3jGrnE9rv46SM1Qy4';
+
+        const { createClient } = supabase;
+        const supabasePublic = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+        const ADMIN_PASS = 'Jose*2025';
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentDetails = null;
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, i) => sum + i.qty, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        async function loadItems(table, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<div class="spinner"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>';
+            const { data, error } = await supabasePublic.from(table).select('*').order('id');
+            if (error) { container.innerHTML = '<p class="text-danger">Error al cargar datos</p>'; console.error(error); return; }
+            container.innerHTML = '';
+            data.forEach(item => {
+                container.innerHTML += `
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card h-100">
+                            <img src="${item.img_url || 'https://placehold.co/400x300?text=Sin+imagen'}" class="card-img-top" alt="${item.name}">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${item.name}</h5>
+                                <p class="card-text flex-grow-1">${item.desc || ''}</p>
+                                <p class="card-text fw-bold">$${item.price}</p>
+                                <button class="btn btn-primary mt-auto" onclick="showDetails('${table}', ${item.id})">Ver detalles</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function showDetails(type, id) {
+            const { data: item, error } = await supabasePublic.from(type).select('*').eq('id', id).single();
+            if (error || !item) { alert('Item no encontrado'); return; }
+            currentDetails = { type, id, item };
+            document.getElementById('details').innerHTML = `
+                <img src="${item.img_url || 'https://placehold.co/800x500?text=Sin+imagen'}" class="card-img-top" alt="${item.name}">
+                <div class="card-body">
+                    <h3 class="card-title">${item.name}</h3>
+                    <p class="fs-4 text-primary fw-bold">Precio: $${item.price}</p>
+                    <p class="card-text">${item.details || 'Sin detalles adicionales'}</p>
+                    <div class="input-group mb-3 w-75 mx-auto">
+                        <span class="input-group-text">Cantidad</span>
+                        <input type="number" id="qty" class="form-control" value="1" min="1">
+                    </div>
+                    <button class="btn btn-success btn-lg w-100" onclick="addToCart()">Agregar al Carrito</button>
+                </div>
+            `;
+            showSection('details');
+        }
+
+        function addToCart() {
+            if (!currentDetails) return;
+            const qty = parseInt(document.getElementById('qty').value) || 1;
+            const { type, id, item } = currentDetails;
+            const existing = cart.find(i => i.type === type && i.id === id);
+            if (existing) existing.qty += qty;
+            else cart.push({ type, id, name: item.name, price: item.price, qty });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert('¡Producto agregado al carrito!');
+            updateCartCount();
+            showSection('catalog');
+        }
+
+        function displayCart() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-center col">El carrito está vacío</p>';
+                totalEl.innerHTML = '';
+                return;
+            }
+            container.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                container.innerHTML += `
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                                <div>
+                                    <h5>${item.name}</h5>
+                                    <p class="mb-0">$${item.price} × ${item.qty} = $${subtotal}</p>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary" onclick="changeQty(${index}, 1)">+</button>
+                                    <button class="btn btn-outline-primary" onclick="changeQty(${index}, -1)">-</button>
+                                    <button class="btn btn-danger" onclick="removeFromCart(${index})">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            totalEl.innerHTML = `<strong>Total: $${total.toFixed(2)}</strong>`;
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) removeFromCart(index);
+            else {
+                localStorage.setItem('cart', JSON.stringify(cart));
+                displayCart();
+                updateCartCount();
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+            updateCartCount();
+        }
+
+        async function buyItems() {
+            if (cart.length === 0) return alert('El carrito está vacío');
+            const { data } = await supabasePublic.from('config').select('value').eq('key', 'wa_number').single();
+            const waNumber = data?.value || '5358452022';
+            let message = '*Hola Hi Tech!*\n\nQuiero comprar:\n';
+            let total = 0;
+            cart.forEach(item => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                message += `• ${item.name} × ${item.qty} = $${subtotal}\n`;
+            });
+            message += `\n*Total: $${total.toFixed(2)}*\n¡Gracias!`;
+            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            displayCart();
+        }
+
+        function showSection(section) {
+            document.querySelectorAll('#catalog-section, #details-section, #cart-section, #admin-section')
+                .forEach(el => el.style.display = 'none');
+            document.getElementById(`${section}-section`).style.display = 'block';
+            if (section === 'cart') displayCart();
+            if (section === 'admin' && document.getElementById('admin-panel').style.display === 'block') {
+                loadAdminItems('products');
+                loadAdminItems('services');
+            }
+        }
+
+        // Admin functions
+        function loginAdmin() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === ADMIN_PASS) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadAdminItems('products');
+                loadAdminItems('services');
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        }
+
+        async function loadAdminItems(table) {
+            const container = document.getElementById(`admin-${table}`);
+            container.innerHTML = '<div class="spinner"><div class="spinner-border text-primary"></div></div>';
+            const { data, error } = await supabaseAdmin.from(table).select('*').order('id');
+            if (error) { container.innerHTML = '<p class="text-danger">Error</p>'; console.error(error); return; }
+            container.innerHTML = '';
+            data.forEach(item => {
+                container.innerHTML += `
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card h-100">
+                            <img src="${item.img_url || 'https://placehold.co/400x300?text=Sin+imagen'}" class="card-img-top">
+                            <div class="card-body">
+                                <h5>${item.name} - $${item.price}</h5>
+                                <p>${item.desc || ''}</p>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button class="btn btn-warning me-md-2" onclick="editItem('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${(item.desc || '').replace(/'/g, "\\'")}', '${(item.details || '').replace(/'/g, "\\'")}', '${item.img_url || ''}')">Editar</button>
+                                    <button class="btn btn-danger" onclick="deleteItem('${table}', ${item.id})">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function uploadImage(file) {
+            if (!file) return null;
+            const fileName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+            const { error } = await supabaseAdmin.storage.from('images').upload(fileName, file, { upsert: true });
+            if (error) { alert('Error subiendo imagen'); console.error(error); return null; }
+            const { data } = supabaseAdmin.storage.from('images').getPublicUrl(fileName);
+            return data.publicUrl;
+        }
+
+        async function addItem(table) {
+            const prefix = table === 'products' ? 'prod' : 'serv';
+            const name = document.getElementById(`new-${prefix}-name`).value.trim();
+            const price = parseFloat(document.getElementById(`new-${prefix}-price`).value);
+            const desc = document.getElementById(`new-${prefix}-desc`).value.trim();
+            const details = document.getElementById(`new-${prefix}-details`).value.trim();
+            const file = document.getElementById(`new-${prefix}-img`).files[0];
+
+            if (!name || isNaN(price)) return alert('Nombre y precio son obligatorios');
+
+            const img_url = file ? await uploadImage(file) : null;
+
+            const { error } = await supabaseAdmin.from(table).insert({ name, price, desc, details, img_url });
+            if (error) { alert('Error: ' + error.message); console.error(error); }
+            else {
+                alert('¡Agregado correctamente!');
+                loadAdminItems(table);
+                // Limpiar formulario
+                document.getElementById(`new-${prefix}-name`).value = '';
+                document.getElementById(`new-${prefix}-price`).value = '';
+                document.getElementById(`new-${prefix}-desc`).value = '';
+                document.getElementById(`new-${prefix}-details`).value = '';
+                document.getElementById(`new-${prefix}-img`).value = '';
+            }
+        }
+
+        function editItem(table, id, name, price, desc, details, img_url) {
+            document.getElementById('edit-name').value = name;
+            document.getElementById('edit-price').value = price;
+            document.getElementById('edit-desc').value = desc;
+            document.getElementById('edit-details').value = details;
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-table').value = table;
+            document.getElementById('edit-img-url').value = img_url;
+            const modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+
+        async function updateItem() {
+            const table = document.getElementById('edit-table').value;
+            const id = parseInt(document.getElementById('edit-id').value);
+            const name = document.getElementById('edit-name').value.trim();
+            const price = parseFloat(document.getElementById('edit-price').value);
+            const desc = document.getElementById('edit-desc').value.trim();
+            const details = document.getElementById('edit-details').value.trim();
+            const file = document.getElementById('edit-img').files[0];
+            const currentImg = document.getElementById('edit-img-url').value;
+
+            if (!name || isNaN(price)) return alert('Nombre y precio obligatorios');
+
+            const img_url = file ? await uploadImage(file) : currentImg;
+
+            const { error } = await supabaseAdmin.from(table).update({ name, price, desc, details, img_url }).eq('id', id);
+            if (error) { alert('Error: ' + error.message); console.error(error); }
+            else {
+                alert('¡Actualizado correctamente!');
+                loadAdminItems(table);
+            }
+        }
+
+        async function deleteItem(table, id) {
+            if (!confirm('¿Estás seguro de eliminar este item?')) return;
+            const { error } = await supabaseAdmin.from(table).delete().eq('id', id);
+            if (error) { alert('Error al eliminar'); console.error(error); }
+            else {
+                alert('Eliminado');
+                loadAdminItems(table);
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            loadItems('products', 'product-list');
+            loadItems('services', 'service-list');
+            updateCartCount();
+            document.getElementById('login-btn').addEventListener('click', loginAdmin);
+            document.getElementById('buy-btn').addEventListener('click', buyItems);
+            showSection('catalog');
+        });
+    </script>
+</body>
+</html>
