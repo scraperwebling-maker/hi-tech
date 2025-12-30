@@ -172,7 +172,7 @@
         </div>
     </div>
 
-    <!-- Modales Admin (igual que tu código original) -->
+    <!-- Modales Admin -->
     <div class="modal fade" id="addProductModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -276,18 +276,90 @@
         const supabasePublic = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
         const ADMIN_PASS = 'Jose*2025';
+
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         let currentDetails = null;
 
-        const toastEl = document.getElementById('cart-toast');
-        const toast = new bootstrap.Toast(toastEl);
+        const toast = new bootstrap.Toast(document.getElementById('cart-toast'));
 
+        // --- Carrito ---
         function updateCartCount() {
             const count = cart.reduce((sum, i) => sum + i.qty, 0);
             document.getElementById('cart-count').textContent = count;
         }
 
+        function displayCart() {
+            const container = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-center col">El carrito está vacío</p>';
+                totalEl.innerHTML = '';
+                return;
+            }
+            container.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                container.innerHTML += `
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                                <div>
+                                    <h5>${item.name}</h5>
+                                    <p class="mb-0">$${item.price} × ${item.qty} = $${subtotal.toFixed(2)}</p>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary" onclick="changeQty(${index}, 1)">+</button>
+                                    <button class="btn btn-outline-primary" onclick="changeQty(${index}, -1)">-</button>
+                                    <button class="btn btn-danger" onclick="removeFromCart(${index})">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            totalEl.innerHTML = `<strong>Total: $${total.toFixed(2)}</strong>`;
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) removeFromCart(index);
+            else {
+                localStorage.setItem('cart', JSON.stringify(cart));
+                displayCart();
+                updateCartCount();
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+            updateCartCount();
+        }
+
+        async function buyItems() {
+            if (cart.length === 0) return alert('El carrito está vacío');
+            const { data } = await supabasePublic.from('config').select('value').eq('key', 'wa_number').single();
+            const waNumber = data?.value || '5358452022';
+            let message = '*Hola Hi Tech!*\n\nQuiero comprar:\n';
+            let total = 0;
+            cart.forEach(item => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                message += `• ${item.name} × ${item.qty} = $${subtotal.toFixed(2)}\n`;
+            });
+            message += `\n*Total: $${total.toFixed(2)}*\n¡Gracias!`;
+            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            displayCart();
+        }
+
+        // --- Favoritos ---
         function updateFavoritesCount() {
             document.getElementById('favorites-count').textContent = favorites.length;
         }
@@ -299,9 +371,10 @@
             else favorites.push({key, type, id, name, price, img_url: img_url || 'https://placehold.co/400x300?text=Sin+imagen'});
             localStorage.setItem('favorites', JSON.stringify(favorites));
             updateFavoritesCount();
-            loadAllItems(); // Recargar listas para actualizar corazones
+            loadAllItems();
         }
 
+        // --- Carga de items ---
         async function loadAllItems() {
             await loadItems('products', 'product-list', false);
             await loadItems('services', 'service-list', false);
@@ -311,8 +384,7 @@
 
         async function loadItems(table, containerId, isPromotion = false) {
             const container = document.getElementById(containerId);
-            const spinner = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
-            container.innerHTML = spinner;
+            container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
             const query = isPromotion ? supabasePublic.from(table).select('*').eq('is_promotion', true) : supabasePublic.from(table).select('*');
             const { data, error } = await query.order('id');
             if (error) { container.innerHTML = '<p class="text-danger">Error al cargar</p>'; console.error(error); return; }
@@ -323,7 +395,7 @@
                 const heartClass = isFav ? 'heart-active' : '';
                 const promotionBadge = item.is_promotion ? '<span class="badge bg-danger promotion-badge">¡Promoción!</span>' : '';
                 container.innerHTML += `
-                    <div class="col-12 col-sm-6 col-lg-4 item-card" data-name="${item.name.toLowerCase()}" data-price="${item.price}">
+                    <div class="col-12 col-sm-6 col-lg-4 item-card" data-name="${(item.name || '').toLowerCase()}" data-price="${item.price}">
                         <div class="card h-100">
                             ${promotionBadge}
                             <img src="${img}" class="card-img-top" alt="${item.name}">
@@ -331,9 +403,9 @@
                                 <h5 class="card-title">${item.name}</h5>
                                 <p class="card-text flex-grow-1">${item.desc || ''}</p>
                                 <p class="card-text fw-bold text-primary fs-4">$${item.price}</p>
-                                <div class="mt-auto d-flex justify-content-between">
+                                <div class="mt-auto d-flex justify-content-between align-items-center">
                                     <button class="btn btn-primary" onclick="showDetails('${table}', ${item.id})">Ver detalles</button>
-                                    <i class="bi bi-heart-fill heart-btn ${heartClass}" onclick="toggleFavorite('${table}', ${item.id}, '${item.name}', ${item.price}, '${img}')"></i>
+                                    <i class="bi bi-heart-fill heart-btn ${heartClass}" onclick="toggleFavorite('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${img}')"></i>
                                 </div>
                             </div>
                         </div>
@@ -343,25 +415,34 @@
         }
 
         async function loadPromotions() {
-            document.getElementById('promotion-list').innerHTML = '';
+            const container = document.getElementById('promotion-list');
+            container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
+            container.innerHTML = '';
             await loadItems('products', 'promotion-list', true);
             await loadItems('services', 'promotion-list', true);
         }
 
         async function loadFavorites() {
             const container = document.getElementById('favorites-list');
-            container.innerHTML = favorites.length === 0 ? '<p class="text-center col-12">No tienes favoritos aún</p>' : '';
+            container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
+            if (favorites.length === 0) {
+                container.innerHTML = '<p class="text-center col-12 fs-4">No tienes favoritos aún</p>';
+                return;
+            }
+            container.innerHTML = '';
             for (const fav of favorites) {
-                const [type, id] = fav.key.split('-');
-                const { data: item } = await supabasePublic.from(type).select('*').eq('id', parseInt(id)).single();
+                const [type, idStr] = fav.key.split('-');
+                const id = parseInt(idStr);
+                const { data: item } = await supabasePublic.from(type).select('*').eq('id', id).single();
                 if (item) {
                     container.innerHTML += `
                         <div class="col-12 col-sm-6 col-lg-4">
                             <div class="card h-100">
                                 <img src="${fav.img_url}" class="card-img-top" alt="${fav.name}">
-                                <div class="card-body">
-                                    <h5>${fav.name} - $${fav.price}</h5>
-                                    <button class="btn btn-primary" onclick="showDetails('${type}', ${id})">Ver detalles</button>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">${fav.name}</h5>
+                                    <p class="card-text fw-bold text-primary fs-4">$${fav.price}</p>
+                                    <button class="btn btn-primary mt-auto" onclick="showDetails('${type}', ${id})">Ver detalles</button>
                                 </div>
                             </div>
                         </div>
@@ -371,21 +452,23 @@
         }
 
         function filterAndSort() {
-            const search = document.getElementById('search-input').value.toLowerCase();
+            const search = (document.getElementById('search-input').value || '').toLowerCase();
             const sort = document.getElementById('sort-select').value;
             document.querySelectorAll('.item-card').forEach(card => {
-                const name = card.dataset.name;
-                const price = parseFloat(card.dataset.price);
-                const visible = name.includes(search);
-                card.style.display = visible ? '' : 'none';
+                const name = card.dataset.name || '';
+                card.style.display = name.includes(search) ? '' : 'none';
             });
             if (sort) {
-                const container = document.querySelectorAll('#product-list, #service-list');
-                container.forEach(cont => {
+                ['#product-list', '#service-list', '#promotion-list'].forEach(selector => {
+                    const cont = document.querySelector(selector);
+                    if (!cont) return;
                     const cards = Array.from(cont.querySelectorAll('.item-card'));
                     cards.sort((a, b) => {
-                        if (sort.includes('name')) return sort === 'name-asc' ? a.dataset.name.localeCompare(b.dataset.name) : b.dataset.name.localeCompare(a.dataset.name);
-                        if (sort.includes('price')) return sort === 'price-asc' ? a.dataset.price - b.dataset.price : b.dataset.price - a.dataset.price;
+                        if (sort === 'name-asc') return a.dataset.name.localeCompare(b.dataset.name);
+                        if (sort === 'name-desc') return b.dataset.name.localeCompare(a.dataset.name);
+                        if (sort === 'price-asc') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                        if (sort === 'price-desc') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                        return 0;
                     });
                     cards.forEach(c => cont.appendChild(c));
                 });
@@ -402,7 +485,9 @@
             document.getElementById('details').innerHTML = `
                 <img src="${imgSrc}" class="card-img-top details-img rounded shadow" alt="${item.name}" onclick="openZoomModal('${imgSrc}')">
                 <div class="card-body">
-                    <h3 class="card-title">${item.name} <i class="bi bi-heart-fill heart-btn ${heartClass}" onclick="toggleFavorite('${type}', ${id}, '${item.name}', ${item.price}, '${imgSrc}')"></i></h3>
+                    <h3 class="card-title d-flex justify-content-between align-items-center">${item.name}
+                        <i class="bi bi-heart-fill heart-btn ${heartClass}" onclick="toggleFavorite('${type}', ${id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${imgSrc}')"></i>
+                    </h3>
                     <p class="fs-4 text-primary fw-bold">Precio: $${item.price}</p>
                     <p class="card-text">${item.details || 'Sin detalles adicionales'}</p>
                     <div class="input-group mb-3 w-75 mx-auto">
@@ -417,8 +502,7 @@
 
         function openZoomModal(src) {
             document.getElementById('zoomedImage').src = src;
-            const modal = new bootstrap.Modal(document.getElementById('imageZoomModal'));
-            modal.show();
+            new bootstrap.Modal(document.getElementById('imageZoomModal')).show();
         }
 
         function addToCart() {
@@ -434,8 +518,125 @@
             showSection('catalog');
         }
 
-        // El resto del JavaScript (displayCart, buyItems, admin functions, etc.) es exactamente igual al original
-        // Solo copio las partes esenciales para no exceder, pero puedes pegar tu código original aquí
+        // --- Admin ---
+        function loginAdmin() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === ADMIN_PASS) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadAdminItems('products');
+                loadAdminItems('services');
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        }
+
+        async function loadAdminItems(table) {
+            const container = document.getElementById(`admin-${table}`);
+            container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div></div>';
+            const { data, error } = await supabaseAdmin.from(table).select('*').order('id');
+            if (error) { container.innerHTML = '<p class="text-danger">Error</p>'; console.error(error); return; }
+            container.innerHTML = '';
+            data.forEach(item => {
+                const promotionChecked = item.is_promotion ? 'checked' : '';
+                container.innerHTML += `
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <div class="card h-100">
+                            <img src="${item.img_url || 'https://placehold.co/400x300?text=Sin+imagen'}" class="card-img-top">
+                            <div class="card-body">
+                                <h5>${item.name} - $${item.price}</h5>
+                                <p>${item.desc || ''}</p>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" disabled ${promotionChecked}>
+                                    <label class="form-check-label">Promoción</label>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button class="btn btn-warning me-md-2" onclick="editItem('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${(item.desc || '').replace(/'/g, "\\'")}', '${(item.details || '').replace(/'/g, "\\'")}', '${item.img_url || ''}', ${item.is_promotion || false})">Editar</button>
+                                    <button class="btn btn-danger" onclick="deleteItem('${table}', ${item.id})">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function uploadImage(file) {
+            if (!file) return null;
+            const fileName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+            const { error } = await supabaseAdmin.storage.from('images').upload(fileName, file, { upsert: true });
+            if (error) { alert('Error subiendo imagen'); console.error(error); return null; }
+            const { data } = supabaseAdmin.storage.from('images').getPublicUrl(fileName);
+            return data.publicUrl;
+        }
+
+        async function addItem(table) {
+            const prefix = table === 'products' ? 'prod' : 'serv';
+            const name = document.getElementById(`new-${prefix}-name`).value.trim();
+            const price = parseFloat(document.getElementById(`new-${prefix}-price`).value);
+            const desc = document.getElementById(`new-${prefix}-desc`).value.trim();
+            const details = document.getElementById(`new-${prefix}-details`).value.trim();
+            const file = document.getElementById(`new-${prefix}-img`).files[0];
+            const is_promotion = document.getElementById(`new-${prefix}-promotion`).checked;
+            if (!name || isNaN(price)) return alert('Nombre y precio son obligatorios');
+            const img_url = file ? await uploadImage(file) : null;
+            const { error } = await supabaseAdmin.from(table).insert({ name, price, desc, details, img_url, is_promotion });
+            if (error) { alert('Error: ' + error.message); console.error(error); }
+            else {
+                alert('¡Agregado correctamente!');
+                loadAdminItems(table);
+                document.getElementById(`new-${prefix}-name`).value = '';
+                document.getElementById(`new-${prefix}-price`).value = '';
+                document.getElementById(`new-${prefix}-desc`).value = '';
+                document.getElementById(`new-${prefix}-details`).value = '';
+                document.getElementById(`new-${prefix}-img`).value = '';
+                document.getElementById(`new-${prefix}-promotion`).checked = false;
+            }
+        }
+
+        function editItem(table, id, name, price, desc, details, img_url, is_promotion) {
+            document.getElementById('edit-name').value = name;
+            document.getElementById('edit-price').value = price;
+            document.getElementById('edit-desc').value = desc;
+            document.getElementById('edit-details').value = details;
+            document.getElementById('edit-promotion').checked = is_promotion;
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-table').value = table;
+            document.getElementById('edit-img-url').value = img_url;
+            new bootstrap.Modal(document.getElementById('editModal')).show();
+        }
+
+        async function updateItem() {
+            const table = document.getElementById('edit-table').value;
+            const id = parseInt(document.getElementById('edit-id').value);
+            const name = document.getElementById('edit-name').value.trim();
+            const price = parseFloat(document.getElementById('edit-price').value);
+            const desc = document.getElementById('edit-desc').value.trim();
+            const details = document.getElementById('edit-details').value.trim();
+            const is_promotion = document.getElementById('edit-promotion').checked;
+            const file = document.getElementById('edit-img').files[0];
+            const currentImg = document.getElementById('edit-img-url').value;
+            if (!name || isNaN(price)) return alert('Nombre y precio obligatorios');
+            const img_url = file ? await uploadImage(file) : currentImg;
+            const { error } = await supabaseAdmin.from(table).update({ name, price, desc, details, img_url, is_promotion }).eq('id', id);
+            if (error) { alert('Error: ' + error.message); console.error(error); }
+            else {
+                alert('¡Actualizado correctamente!');
+                loadAdminItems(table);
+                loadAllItems();
+            }
+        }
+
+        async function deleteItem(table, id) {
+            if (!confirm('¿Estás seguro de eliminar este item?')) return;
+            const { error } = await supabaseAdmin.from(table).delete().eq('id', id);
+            if (error) { alert('Error al eliminar'); console.error(error); }
+            else {
+                alert('Eliminado');
+                loadAdminItems(table);
+                loadAllItems();
+            }
+        }
 
         function showSection(section) {
             document.querySelectorAll('#catalog-section, #details-section, #cart-section, #admin-section, #favorites-section')
