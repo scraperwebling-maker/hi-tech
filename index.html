@@ -38,8 +38,8 @@
     <div class="container mt-5 pt-5">
         <div class="bg-light bg-opacity-95 rounded-4 shadow-lg p-4">
 
-            <!-- Hero Section -->
-            <div class="text-center py-5 mb-5 bg-primary text-white rounded-4 position-relative overflow-hidden">
+            <!-- Hero Section (solo visible en catálogo) -->
+            <div id="hero-section" class="text-center py-5 mb-5 bg-primary text-white rounded-4 position-relative overflow-hidden">
                 <img src="https://jpgzkdydzfofhjeerjan.supabase.co/storage/v1/object/public/images/logo_hitech.jpg" alt="Hi Tech Logo" class="rounded-circle mb-4 shadow-lg" style="height: 180px; width: 180px; object-fit: cover; background-color: black; border: 6px solid white;">
                 <h1 class="display-5 fw-bold">¡Bienvenido a Hi Tech!</h1>
                 <p class="lead fs-4">Reparación profesional y venta de celulares al mejor precio</p>
@@ -155,7 +155,7 @@
                 <div class="col-md-6 mb-4 mb-md-0">
                     <h5 class="fw-bold mb-4"><i class="bi bi-telephone-fill me-2"></i>Contacto</h5>
                     <p class="fs-5 mb-3"><i class="bi bi-phone me-2"></i><strong>+53 58452022</strong></p>
-    
+
                     <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-clock-fill me-2"></i>Horario de Atención</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><strong>Lunes:</strong> 8:30 a.m. – 5:30 p.m.</li>
@@ -166,7 +166,7 @@
                         <li class="mb-2"><strong>Sábado:</strong> 8:30 a.m. – 1:00 p.m.</li>
                         <li class="text-danger mb-2"><strong>Domingo:</strong> Cerrado</li>
                     </ul>
-    
+
                     <!-- Redes Sociales -->
                     <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-share-fill me-2"></i>Síguenos en Redes</h5>
                     <div class="d-flex flex-column gap-3">
@@ -180,7 +180,7 @@
                         </a>
                     </div>
                 </div>
-    
+
                 <div class="col-md-6">
                     <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt-fill me-2"></i>Nuestra Ubicación</h5>
                     <div class="ratio ratio-16x9 rounded-4 shadow overflow-hidden">
@@ -194,9 +194,9 @@
                     </div>
                 </div>
             </div>
-    
+
             <hr class="my-4">
-    
+
             <p class="text-center mb-0 fs-6">© 2025 Hi Tech. Todos los derechos reservados.</p>
         </div>
     </footer>
@@ -213,7 +213,7 @@
         </div>
     </div>
 
-    <!-- Modales Admin -->
+    <!-- Modales Admin (con nuevo checkbox "Agotado") -->
     <div class="modal fade" id="addProductModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -224,9 +224,13 @@
                     <textarea id="new-prod-desc" class="form-control mb-2" rows="2" placeholder="Descripción breve"></textarea>
                     <textarea id="new-prod-details" class="form-control mb-2" rows="4" placeholder="Detalles completos"></textarea>
                     <input type="file" id="new-prod-img" class="form-control mb-2" accept="image/*">
-                    <div class="form-check">
+                    <div class="form-check mb-2">
                         <input type="checkbox" id="new-prod-promotion" class="form-check-input">
                         <label class="form-check-label">Es promoción</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="new-prod-outofstock" class="form-check-input">
+                        <label class="form-check-label">Producto agotado</label>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -246,9 +250,13 @@
                     <textarea id="new-serv-desc" class="form-control mb-2" rows="2" placeholder="Descripción breve"></textarea>
                     <textarea id="new-serv-details" class="form-control mb-2" rows="4" placeholder="Detalles completos"></textarea>
                     <input type="file" id="new-serv-img" class="form-control mb-2" accept="image/*">
-                    <div class="form-check">
+                    <div class="form-check mb-2">
                         <input type="checkbox" id="new-serv-promotion" class="form-check-input">
                         <label class="form-check-label">Es promoción</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="new-serv-outofstock" class="form-check-input">
+                        <label class="form-check-label">Servicio no disponible</label>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -273,6 +281,10 @@
                         <input type="checkbox" id="edit-promotion" class="form-check-input">
                         <label class="form-check-label">Es promoción</label>
                     </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="edit-outofstock" class="form-check-input">
+                        <label class="form-check-label">Agotado / No disponible</label>
+                    </div>
                     <input type="hidden" id="edit-id">
                     <input type="hidden" id="edit-table">
                     <input type="hidden" id="edit-img-url">
@@ -294,6 +306,7 @@
         .details-img { height: 450px; object-fit: contain !important; background-color: #fff; padding: 20px; cursor: zoom-in; transition: transform 0.3s; }
         .details-img:hover { transform: scale(1.02); }
         .promotion-badge { position: absolute; top: 10px; left: 10px; z-index: 2; }
+        .outofstock-badge { position: absolute; top: 10px; right: 10px; z-index: 2; }
         .heart-btn { cursor: pointer; transition: all 0.2s; }
         .heart-active { color: red !important; transform: scale(1.2); }
         @media (max-width: 768px) {
@@ -435,17 +448,20 @@
                 const isFav = favorites.some(f => f.key === `${table}-${item.id}`);
                 const heartClass = isFav ? 'heart-active' : '';
                 const promotionBadge = item.is_promotion ? '<span class="badge bg-danger promotion-badge">¡Promoción!</span>' : '';
+                const outOfStockBadge = item.is_out_of_stock ? '<span class="badge bg-secondary outofstock-badge">Agotado</span>' : '';
+                const addToCartDisabled = item.is_out_of_stock ? 'disabled' : '';
                 container.innerHTML += `
                     <div class="col-12 col-sm-6 col-lg-4 item-card" data-name="${(item.name || '').toLowerCase()}" data-price="${item.price}">
                         <div class="card h-100">
                             ${promotionBadge}
+                            ${outOfStockBadge}
                             <img src="${img}" class="card-img-top" alt="${item.name}">
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">${item.name}</h5>
                                 <p class="card-text flex-grow-1">${item.desc || ''}</p>
                                 <p class="card-text fw-bold text-primary fs-4">$${item.price}</p>
                                 <div class="mt-auto d-flex justify-content-between align-items-center">
-                                    <button class="btn btn-primary" onclick="showDetails('${table}', ${item.id})">Ver detalles</button>
+                                    <button class="btn btn-primary" onclick="showDetails('${table}', ${item.id})" ${addToCartDisabled}>Ver detalles</button>
                                     <i class="bi bi-heart-fill heart-btn ${heartClass}" onclick="toggleFavorite('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${img}')"></i>
                                 </div>
                             </div>
@@ -523,6 +539,10 @@
             const imgSrc = item.img_url || 'https://placehold.co/800x600?text=Sin+imagen';
             const isFav = favorites.some(f => f.key === `${type}-${id}`);
             const heartClass = isFav ? 'heart-active' : '';
+            const outOfStock = item.is_out_of_stock;
+            const addButton = outOfStock 
+                ? '<button class="btn btn-secondary btn-lg w-100 shadow" disabled>Agotado</button><p class="text-center text-danger mt-2">Este producto está temporalmente agotado</p>'
+                : '<button class="btn btn-success btn-lg w-100 shadow" onclick="addToCart()">Agregar al Carrito</button>';
             document.getElementById('details').innerHTML = `
                 <img src="${imgSrc}" class="card-img-top details-img rounded shadow" alt="${item.name}" onclick="openZoomModal('${imgSrc}')">
                 <div class="card-body">
@@ -531,11 +551,8 @@
                     </h3>
                     <p class="fs-4 text-primary fw-bold">Precio: $${item.price}</p>
                     <p class="card-text">${item.details || 'Sin detalles adicionales'}</p>
-                    <div class="input-group mb-3 w-75 mx-auto">
-                        <span class="input-group-text">Cantidad</span>
-                        <input type="number" id="qty" class="form-control" value="1" min="1">
-                    </div>
-                    <button class="btn btn-success btn-lg w-100 shadow" onclick="addToCart()">Agregar al Carrito</button>
+                    ${outOfStock ? '' : '<div class="input-group mb-3 w-75 mx-auto"><span class="input-group-text">Cantidad</span><input type="number" id="qty" class="form-control" value="1" min="1"></div>'}
+                    ${addButton}
                 </div>
             `;
             showSection('details');
@@ -547,7 +564,7 @@
         }
 
         function addToCart() {
-            if (!currentDetails) return;
+            if (!currentDetails || currentDetails.item.is_out_of_stock) return;
             toast.show();
             const qty = parseInt(document.getElementById('qty').value) || 1;
             const { type, id, item } = currentDetails;
@@ -580,6 +597,7 @@
             container.innerHTML = '';
             data.forEach(item => {
                 const promotionChecked = item.is_promotion ? 'checked' : '';
+                const outOfStockChecked = item.is_out_of_stock ? 'checked' : '';
                 container.innerHTML += `
                     <div class="col-12 col-sm-6 col-lg-4">
                         <div class="card h-100">
@@ -591,8 +609,12 @@
                                     <input type="checkbox" class="form-check-input" disabled ${promotionChecked}>
                                     <label class="form-check-label">Promoción</label>
                                 </div>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" disabled ${outOfStockChecked}>
+                                    <label class="form-check-label">Agotado</label>
+                                </div>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button class="btn btn-warning me-md-2" onclick="editItem('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${(item.desc || '').replace(/'/g, "\\'")}', '${(item.details || '').replace(/'/g, "\\'")}', '${item.img_url || ''}', ${item.is_promotion || false})">Editar</button>
+                                    <button class="btn btn-warning me-md-2" onclick="editItem('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${(item.desc || '').replace(/'/g, "\\'")}', '${(item.details || '').replace(/'/g, "\\'")}', '${item.img_url || ''}', ${item.is_promotion || false}, ${item.is_out_of_stock || false})">Editar</button>
                                     <button class="btn btn-danger" onclick="deleteItem('${table}', ${item.id})">Eliminar</button>
                                 </div>
                             </div>
@@ -619,9 +641,10 @@
             const details = document.getElementById(`new-${prefix}-details`).value.trim();
             const file = document.getElementById(`new-${prefix}-img`).files[0];
             const is_promotion = document.getElementById(`new-${prefix}-promotion`).checked;
+            const is_out_of_stock = document.getElementById(`new-${prefix}-outofstock`).checked;
             if (!name || isNaN(price)) return alert('Nombre y precio son obligatorios');
             const img_url = file ? await uploadImage(file) : null;
-            const { error } = await supabaseAdmin.from(table).insert({ name, price, desc, details, img_url, is_promotion });
+            const { error } = await supabaseAdmin.from(table).insert({ name, price, desc, details, img_url, is_promotion, is_out_of_stock });
             if (error) { alert('Error: ' + error.message); console.error(error); }
             else {
                 alert('¡Agregado correctamente!');
@@ -632,15 +655,17 @@
                 document.getElementById(`new-${prefix}-details`).value = '';
                 document.getElementById(`new-${prefix}-img`).value = '';
                 document.getElementById(`new-${prefix}-promotion`).checked = false;
+                document.getElementById(`new-${prefix}-outofstock`).checked = false;
             }
         }
 
-        function editItem(table, id, name, price, desc, details, img_url, is_promotion) {
+        function editItem(table, id, name, price, desc, details, img_url, is_promotion, is_out_of_stock) {
             document.getElementById('edit-name').value = name;
             document.getElementById('edit-price').value = price;
             document.getElementById('edit-desc').value = desc;
             document.getElementById('edit-details').value = details;
             document.getElementById('edit-promotion').checked = is_promotion;
+            document.getElementById('edit-outofstock').checked = is_out_of_stock;
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-table').value = table;
             document.getElementById('edit-img-url').value = img_url;
@@ -655,11 +680,12 @@
             const desc = document.getElementById('edit-desc').value.trim();
             const details = document.getElementById('edit-details').value.trim();
             const is_promotion = document.getElementById('edit-promotion').checked;
+            const is_out_of_stock = document.getElementById('edit-outofstock').checked;
             const file = document.getElementById('edit-img').files[0];
             const currentImg = document.getElementById('edit-img-url').value;
             if (!name || isNaN(price)) return alert('Nombre y precio obligatorios');
             const img_url = file ? await uploadImage(file) : currentImg;
-            const { error } = await supabaseAdmin.from(table).update({ name, price, desc, details, img_url, is_promotion }).eq('id', id);
+            const { error } = await supabaseAdmin.from(table).update({ name, price, desc, details, img_url, is_promotion, is_out_of_stock }).eq('id', id);
             if (error) { alert('Error: ' + error.message); console.error(error); }
             else {
                 alert('¡Actualizado correctamente!');
@@ -683,6 +709,7 @@
             document.querySelectorAll('#catalog-section, #details-section, #cart-section, #admin-section, #favorites-section')
                 .forEach(el => el.style.display = 'none');
             document.getElementById(`${section}-section`).style.display = 'block';
+            document.getElementById('hero-section').style.display = (section === 'catalog') ? 'block' : 'none';
             if (section === 'catalog') loadAllItems();
             if (section === 'cart') displayCart();
             if (section === 'favorites') loadFavorites();
@@ -705,4 +732,3 @@
     </script>
 </body>
 </html>
-
