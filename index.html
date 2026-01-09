@@ -7,40 +7,42 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* --- 1. Letras azules → negras --- */
-        .text-primary { color: #000 !important; }
-
-        /* --- 2. Fondo atractivo / loop reparación celular --- */
+        /* ---------- 1. FONDO ATRACTIVO + TRANSPARENCIA REAL ---------- */
         body {
-            background: url("https://i.giphy.com/media/xTcnT2ZgWdR4IuSmkU/giphy-loop.mp4") no-repeat center center fixed;
-            background-size: cover;
+            margin: 0;
+            padding-bottom: 100px;
+            background: url("https://images.unsplash.com/photo-1605397364399-05d9a4965b1b?auto=format&fit=crop&w=1920&q=80") center/cover fixed;
             min-height: 100vh;
             overflow-x: hidden;
         }
-        /* fallback imagen estática si el video no carga */
+        /* capa cristal claro encima */
         body::before {
             content: "";
             position: fixed;
             inset: 0;
             z-index: -1;
-            background: url("https://images.unsplash.com/photo-1605397364399-05d9a4965b1b?auto=format&fit=crop&w=1920&q=80") center/cover no-repeat;
-            opacity: 0.25;
+            background: rgba(255,255,255,.55);
+            backdrop-filter: blur(10px) saturate(1.2);
+            -webkit-backdrop-filter: blur(10px) saturate(1.2);
         }
 
-        /* --- 6. Estilo iPhone translúcido --- */
+        /* ---------- 2. BOTONES CRISTAL iPHONE ---------- */
         .btn, .navbar, .card, .modal-content, .toast, .input-group-text, .form-control, .form-select {
-            background: rgba(255,255,255,0.25) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-            border: 1px solid rgba(255,255,255,0.35) !important;
+            background: rgba(255,255,255,.35) !important;
+            border: 1px solid rgba(255,255,255,.45) !important;
             color: #000 !important;
             border-radius: 1rem !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
         }
-        .btn:hover { background: rgba(255,255,255,0.4) !important; }
+        .btn:hover { background: rgba(255,255,255,.55) !important; }
 
-        /* otros ajustes visuales */
-        body { padding-bottom: 100px; }
-        .card { overflow: hidden; transition: all .3s ease; position: relative; }
+        /* ---------- 3. COLOR DE TEXTO PRINCIPAL NEGRO ---------- */
+        .text-primary { color: #000 !important; }
+
+        /* ---------- 4. CARDS / NAV / HERO ---------- */
+        .card { transition: all .3s ease; position: relative; }
         .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,.25) !important; }
         .card-img-top { height: 220px; object-fit: contain; background: #fff; padding: 15px; }
         .details-img { height: 450px; object-fit: contain; background: #fff; padding: 20px; cursor: zoom-in; transition: transform .3s; }
@@ -64,7 +66,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(0,123,255,0.5); backdrop-filter: blur(10px);">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(0,123,255,.45); backdrop-filter: blur(10px);">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#" onclick="showSection('catalog')">
                 <img src="https://jpgzkdydzfofhjeerjan.supabase.co/storage/v1/object/public/images/logo_hitech.jpg" alt="Hi Tech Logo" class="rounded-circle me-2 shadow" style="height: 50px; width: 50px; object-fit: cover; background: #000; border: 3px solid #fff;">
@@ -91,7 +93,7 @@
 
     <!-- Contenedor principal -->
     <div class="container mt-5 pt-5">
-        <div class="bg-light bg-opacity-75 rounded-4 shadow-lg p-4">
+        <div class="bg-light bg-opacity-50 rounded-4 shadow-lg p-4">
 
             <!-- Hero -->
             <div id="hero-section" class="text-center py-5 mb-5 rounded-4 position-relative overflow-hidden">
@@ -125,16 +127,19 @@
                     </div>
                 </div>
 
+                <!-- PROMOCIONES -->
                 <section id="promotions" class="mb-5">
                     <h2 class="mb-4 fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Promociones Destacadas</h2>
                     <div id="promotion-list" class="row g-4"></div>
                 </section>
 
+                <!-- PRODUCTOS -->
                 <section id="products">
                     <h2 class="mb-4 fw-bold"><i class="bi bi-phone"></i> Productos (Teléfonos)</h2>
                     <div id="product-list" class="row g-4"></div>
                 </section>
 
+                <!-- SERVICIOS -->
                 <section id="services" class="mt-5">
                     <h2 class="mb-4 fw-bold"><i class="bi bi-wrench"></i> Servicios</h2>
                     <div id="service-list" class="row g-4"></div>
@@ -274,7 +279,6 @@
                         <input type="checkbox" id="new-prod-outofstock" class="form-check-input">
                         <label class="form-check-label">Producto agotado</label>
                     </div>
-                    <!-- 4. Opción "No mostrar" -->
                     <div class="form-check mb-2">
                         <input type="checkbox" id="new-prod-hidden" class="form-check-input">
                         <label class="form-check-label">No mostrar en catálogo</label>
@@ -287,7 +291,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="addServiceModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -318,7 +321,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="editModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -469,11 +471,11 @@
             let query = isPromotion
                 ? supabasePublic.from(table).select('*').eq('is_promotion', true)
                 : supabasePublic.from(table).select('*');
-            const { data, error } = await query.order('price', { ascending: true }); // 5. Orden ascendente por precio
+            const { data, error } = await query.order('price', { ascending: true });
             if (error) { container.innerHTML = '<p class="text-danger">Error al cargar</p>'; console.error(error); return; }
             container.innerHTML = '';
             data.forEach(item => {
-                if (item.is_hidden) return; // 4. No mostrar si está oculto
+                if (item.is_hidden) return;
                 const img = item.img_url || 'https://placehold.co/400x300?text=Sin+imagen';
                 const isFav = favorites.some(f => f.key === `${table}-${item.id}`);
                 const heartClass = isFav ? 'heart-active' : '';
@@ -581,7 +583,6 @@
                 </div>
             `;
             showSection('details');
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // 3. Mantiene vista arriba
         }
         function openZoomModal(src) {
             document.getElementById('zoomedImage').src = src;
@@ -743,7 +744,7 @@
                 loadAdminItems('products');
                 loadAdminItems('services');
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // 3. Siempre arriba al cambiar
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
