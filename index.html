@@ -41,9 +41,16 @@
         .details-img:hover { transform: scale(1.02); }
         .promotion-badge { position: absolute; top: 10px; left: 10px; z-index: 2; }
         .outofstock-badge { position: absolute; top: 10px; right: 10px; z-index: 2; }
+        .lowusage-badge { 
+            position: absolute; 
+            top: 45px; 
+            left: 10px; 
+            z-index: 2; 
+            background-color: #a5d8ff !important; /* azul claro */
+            color: #000 !important;
+        }
         .heart-btn { cursor: pointer; transition: all .2s; }
         .heart-active { color: red !important; transform: scale(1.2); }
-
         @media (max-width: 768px) {
             .display-5 { font-size: 2.5rem; }
             .lead { font-size: 1.2rem; }
@@ -82,11 +89,9 @@
             </div>
         </div>
     </nav>
-
     <!-- Contenedor principal -->
     <div class="container mt-5 pt-5">
         <div class="bg-light bg-opacity-50 rounded-4 shadow-lg p-4">
-
             <!-- Hero -->
             <div id="hero-section" class="text-center py-5 mb-5 rounded-4 position-relative overflow-hidden">
                 <img src="https://jpgzkdydzfofhjeerjan.supabase.co/storage/v1/object/public/images/logo_hitech.jpg " alt="Hi Tech Logo" class="rounded-circle mb-4 shadow-lg" style="height: 180px; width: 180px; object-fit: cover; background: #000; border: 6px solid #fff;">
@@ -98,7 +103,6 @@
                 </p>
                 <a href="#" class="btn btn-light btn-lg" onclick="showSection('catalog')"><i class="bi bi-shop"></i> Explorar Catálogo</a>
             </div>
-
             <!-- Catálogo -->
             <div id="catalog-section">
                 <div class="row mb-4 g-3">
@@ -118,32 +122,27 @@
                         </select>
                     </div>
                 </div>
-
                 <!-- PROMOCIONES -->
                 <section id="promotions" class="mb-5">
                     <h2 class="mb-4 fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Promociones Destacadas</h2>
                     <div id="promotion-list" class="row g-4"></div>
                 </section>
-
                 <!-- PRODUCTOS -->
                 <section id="products">
                     <h2 class="mb-4 fw-bold"><i class="bi bi-phone"></i> Productos (Teléfonos)</h2>
                     <div id="product-list" class="row g-4"></div>
                 </section>
-
                 <!-- SERVICIOS -->
                 <section id="services" class="mt-5">
                     <h2 class="mb-4 fw-bold"><i class="bi bi-wrench"></i> Servicios</h2>
                     <div id="service-list" class="row g-4"></div>
                 </section>
             </div>
-
             <!-- Detalles -->
             <div id="details-section" style="display:none;">
                 <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')"><i class="bi bi-arrow-left"></i> Volver al catálogo</a>
                 <div id="details" class="card shadow"></div>
             </div>
-
             <!-- Carrito -->
             <div id="cart-section" style="display:none;">
                 <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')"><i class="bi bi-arrow-left"></i> Volver al catálogo</a>
@@ -152,14 +151,12 @@
                 <div id="cart-total" class="mt-4 text-end fs-4 fw-bold"></div>
                 <button id="buy-btn" class="btn btn-success btn-lg w-100 mt-3 shadow">Comprar por WhatsApp</button>
             </div>
-
             <!-- Favoritos -->
             <div id="favorites-section" style="display:none;">
                 <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')"><i class="bi bi-arrow-left"></i> Volver</a>
                 <h2 class="mt-3 fw-bold"><i class="bi bi-heart-fill text-danger"></i> Mis Favoritos</h2>
                 <div id="favorites-list" class="row g-4"></div>
             </div>
-
             <!-- Admin -->
             <div id="admin-section" style="display:none;">
                 <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')">← Volver</a>
@@ -183,12 +180,10 @@
             </div>
         </div>
     </div>
-
     <!-- WhatsApp flotante -->
     <a href="https://wa.me/5358452022 " target="_blank" class="position-fixed bottom-0 end-0 p-4" style="z-index: 1050;">
         <i class="bi bi-whatsapp fs-1 text-white bg-success rounded-circle p-3 shadow-lg"></i>
     </a>
-
     <!-- Toast -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
         <div id="cart-toast" class="toast align-items-center text-bg-success border-0" role="alert">
@@ -198,7 +193,6 @@
             </div>
         </div>
     </div>
-
     <!-- Footer -->
     <footer class="bg-dark text-white mt-5 py-5">
         <div class="container">
@@ -239,7 +233,6 @@
             <p class="text-center mb-0 fs-6">© 2025 Hi Tech. Todos los derechos reservados.</p>
         </div>
     </footer>
-
     <!-- Modal Zoom -->
     <div class="modal fade" id="imageZoomModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -251,7 +244,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modales Admin -->
     <div class="modal fade" id="addProductModal">
         <div class="modal-dialog modal-lg">
@@ -270,6 +262,10 @@
                     <div class="form-check mb-2">
                         <input type="checkbox" id="new-prod-outofstock" class="form-check-input">
                         <label class="form-check-label">Producto agotado</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="new-prod-lowusage" class="form-check-input">
+                        <label class="form-check-label">De poco uso</label>
                     </div>
                     <div class="form-check mb-2">
                         <input type="checkbox" id="new-prod-hidden" class="form-check-input">
@@ -300,6 +296,10 @@
                     <div class="form-check mb-2">
                         <input type="checkbox" id="new-serv-outofstock" class="form-check-input">
                         <label class="form-check-label">Servicio no disponible</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="new-serv-lowusage" class="form-check-input">
+                        <label class="form-check-label">De poco uso</label>
                     </div>
                     <div class="form-check mb-2">
                         <input type="checkbox" id="new-serv-hidden" class="form-check-input">
@@ -333,6 +333,10 @@
                         <label class="form-check-label">Agotado / No disponible</label>
                     </div>
                     <div class="form-check mb-2">
+                        <input type="checkbox" id="edit-lowusage" class="form-check-input">
+                        <label class="form-check-label">De poco uso</label>
+                    </div>
+                    <div class="form-check mb-2">
                         <input type="checkbox" id="edit-hidden" class="form-check-input">
                         <label class="form-check-label">No mostrar en catálogo</label>
                     </div>
@@ -347,7 +351,6 @@
             </div>
         </div>
     </div>
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -456,6 +459,16 @@
             await loadPromotions();
             filterAndSort();
         }
+
+        // Función auxiliar para generar badges y HTML común
+        const generateBadges = (item) => {
+            let badges = '';
+            if (item.is_promotion) badges += '<span class="badge bg-danger promotion-badge">¡Promoción!</span>';
+            if (item.is_out_of_stock) badges += '<span class="badge bg-secondary outofstock-badge">Agotado</span>';
+            if (item.is_low_usage) badges += '<span class="badge lowusage-badge">Poco uso</span>';
+            return badges;
+        };
+
         async function loadItems(table, containerId, isPromotion = false) {
             const container = document.getElementById(containerId);
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
@@ -470,14 +483,13 @@
                 const img = item.img_url || 'https://placehold.co/400x300?text=Sin+imagen ';
                 const isFav = favorites.some(f => f.key === `${table}-${item.id}`);
                 const heartClass = isFav ? 'heart-active' : '';
-                const promotionBadge = item.is_promotion ? '<span class="badge bg-danger promotion-badge">¡Promoción!</span>' : '';
-                const outOfStockBadge = item.is_out_of_stock ? '<span class="badge bg-secondary outofstock-badge">Agotado</span>' : '';
                 const addToCartDisabled = item.is_out_of_stock ? 'disabled' : '';
+                const badges = generateBadges(item);
+
                 container.innerHTML += `
                     <div class="col-12 col-sm-6 col-lg-4 item-card" data-name="${(item.name || '').toLowerCase()}" data-price="${item.price}">
                         <div class="card h-100">
-                            ${promotionBadge}
-                            ${outOfStockBadge}
+                            ${badges}
                             <img src="${img}" class="card-img-top" alt="${item.name}">
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">${item.name}</h5>
@@ -493,37 +505,33 @@
                 `;
             });
         }
+
         async function loadPromotions() {
             const container = document.getElementById('promotion-list');
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
-        
-            // Fetch datos por separado sin limpiar aún
+
             const { data: promoProducts, error: prodError } = await supabasePublic.from('products').select('*').eq('is_promotion', true).order('price', { ascending: true });
             const { data: promoServices, error: servError } = await supabasePublic.from('services').select('*').eq('is_promotion', true).order('price', { ascending: true });
-        
+
             if (prodError || servError) {
                 container.innerHTML = '<p class="text-danger">Error al cargar promociones</p>';
                 console.error(prodError || servError);
                 return;
             }
-        
-            // Ahora limpia una sola vez y appendea todo
+
             container.innerHTML = '';
-        
-            // Función auxiliar para generar el HTML de un item (reutiliza la lógica de loadItems)
+
             const generateItemHTML = (item, table) => {
                 if (item.is_hidden) return '';
                 const img = item.img_url || 'https://placehold.co/400x300?text=Sin+imagen ';
                 const isFav = favorites.some(f => f.key === `${table}-${item.id}`);
                 const heartClass = isFav ? 'heart-active' : '';
-                const promotionBadge = item.is_promotion ? '<span class="badge bg-danger promotion-badge">¡Promoción!</span>' : '';
-                const outOfStockBadge = item.is_out_of_stock ? '<span class="badge bg-secondary outofstock-badge">Agotado</span>' : '';
                 const addToCartDisabled = item.is_out_of_stock ? 'disabled' : '';
+                const badges = generateBadges(item);
                 return `
                     <div class="col-12 col-sm-6 col-lg-4 item-card" data-name="${(item.name || '').toLowerCase()}" data-price="${item.price}">
                         <div class="card h-100">
-                            ${promotionBadge}
-                            ${outOfStockBadge}
+                            ${badges}
                             <img src="${img}" class="card-img-top" alt="${item.name}">
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">${item.name}</h5>
@@ -538,17 +546,11 @@
                     </div>
                 `;
             };
-        
-            // Appendea productos
-            promoProducts.forEach(item => {
-                container.innerHTML += generateItemHTML(item, 'products');
-            });
-        
-            // Appendea servicios
-            promoServices.forEach(item => {
-                container.innerHTML += generateItemHTML(item, 'services');
-            });
+
+            promoProducts.forEach(item => container.innerHTML += generateItemHTML(item, 'products'));
+            promoServices.forEach(item => container.innerHTML += generateItemHTML(item, 'services'));
         }
+
         async function loadFavorites() {
             const container = document.getElementById('favorites-list');
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
@@ -577,6 +579,7 @@
                 }
             }
         }
+
         function filterAndSort() {
             const search = (document.getElementById('search-input').value || '').toLowerCase();
             const sort = document.getElementById('sort-select').value;
@@ -600,6 +603,7 @@
                 });
             }
         }
+
         async function showDetails(type, id) {
             const { data: item, error } = await supabasePublic.from(type).select('*').eq('id', id).single();
             if (error || !item) { alert('Item no encontrado'); return; }
@@ -626,10 +630,12 @@
             showSection('details');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
         function openZoomModal(src) {
             document.getElementById('zoomedImage').src = src;
             new bootstrap.Modal(document.getElementById('imageZoomModal')).show();
         }
+
         function addToCart() {
             if (!currentDetails || currentDetails.item.is_out_of_stock) return;
             toast.show();
@@ -655,6 +661,7 @@
                 alert('Contraseña incorrecta');
             }
         }
+
         async function loadAdminItems(table) {
             const container = document.getElementById(`admin-${table}`);
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div></div>';
@@ -664,6 +671,7 @@
             data.forEach(item => {
                 const promotionChecked = item.is_promotion ? 'checked' : '';
                 const outOfStockChecked = item.is_out_of_stock ? 'checked' : '';
+                const lowUsageChecked = item.is_low_usage ? 'checked' : '';
                 const hiddenChecked = item.is_hidden ? 'checked' : '';
                 container.innerHTML += `
                     <div class="col-12 col-sm-6 col-lg-4">
@@ -681,11 +689,15 @@
                                     <label class="form-check-label">Agotado</label>
                                 </div>
                                 <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" disabled ${lowUsageChecked}>
+                                    <label class="form-check-label">De poco uso</label>
+                                </div>
+                                <div class="form-check mb-2">
                                     <input type="checkbox" class="form-check-input" disabled ${hiddenChecked}>
                                     <label class="form-check-label">No mostrar</label>
                                 </div>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button class="btn btn-warning me-md-2" onclick="editItem('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}' , ${item.price}, '${(item.desc || '').replace(/'/g, "\\'")}' , '${(item.details || '').replace(/'/g, "\\'")}' , '${item.img_url || ''}', ${item.is_promotion || false}, ${item.is_out_of_stock || false}, ${item.is_hidden || false})">Editar</button>
+                                    <button class="btn btn-warning me-md-2" onclick="editItem('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}' , ${item.price}, '${(item.desc || '').replace(/'/g, "\\'")}' , '${(item.details || '').replace(/'/g, "\\'")}' , '${item.img_url || ''}', ${item.is_promotion || false}, ${item.is_out_of_stock || false}, ${item.is_low_usage || false}, ${item.is_hidden || false})">Editar</button>
                                     <button class="btn btn-danger" onclick="deleteItem('${table}', ${item.id})">Eliminar</button>
                                 </div>
                             </div>
@@ -694,6 +706,7 @@
                 `;
             });
         }
+
         async function uploadImage(file) {
             if (!file) return null;
             const fileName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
@@ -702,6 +715,7 @@
             const { data } = supabaseAdmin.storage.from('images').getPublicUrl(fileName);
             return data.publicUrl;
         }
+
         async function addItem(table) {
             const prefix = table === 'products' ? 'prod' : 'serv';
             const name = document.getElementById(`new-${prefix}-name`).value.trim();
@@ -711,10 +725,14 @@
             const file = document.getElementById(`new-${prefix}-img`).files[0];
             const is_promotion = document.getElementById(`new-${prefix}-promotion`).checked;
             const is_out_of_stock = document.getElementById(`new-${prefix}-outofstock`).checked;
+            const is_low_usage = document.getElementById(`new-${prefix}-lowusage`).checked;
             const is_hidden = document.getElementById(`new-${prefix}-hidden`).checked;
             if (!name || isNaN(price)) return alert('Nombre y precio son obligatorios');
             const img_url = file ? await uploadImage(file) : null;
-            const { error } = await supabaseAdmin.from(table).insert({ name, price, desc, details, img_url, is_promotion, is_out_of_stock, is_hidden });
+            const { error } = await supabaseAdmin.from(table).insert({ 
+                name, price, desc, details, img_url, 
+                is_promotion, is_out_of_stock, is_low_usage, is_hidden 
+            });
             if (error) { alert('Error: ' + error.message); console.error(error); }
             else {
                 alert('¡Agregado correctamente!');
@@ -726,22 +744,26 @@
                 document.getElementById(`new-${prefix}-img`).value = '';
                 document.getElementById(`new-${prefix}-promotion`).checked = false;
                 document.getElementById(`new-${prefix}-outofstock`).checked = false;
+                document.getElementById(`new-${prefix}-lowusage`).checked = false;
                 document.getElementById(`new-${prefix}-hidden`).checked = false;
             }
         }
-        function editItem(table, id, name, price, desc, details, img_url, is_promotion, is_out_of_stock, is_hidden) {
+
+        function editItem(table, id, name, price, desc, details, img_url, is_promotion, is_out_of_stock, is_low_usage, is_hidden) {
             document.getElementById('edit-name').value = name;
             document.getElementById('edit-price').value = price;
             document.getElementById('edit-desc').value = desc;
             document.getElementById('edit-details').value = details;
             document.getElementById('edit-promotion').checked = is_promotion;
             document.getElementById('edit-outofstock').checked = is_out_of_stock;
+            document.getElementById('edit-lowusage').checked = is_low_usage;
             document.getElementById('edit-hidden').checked = is_hidden;
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-table').value = table;
             document.getElementById('edit-img-url').value = img_url;
             new bootstrap.Modal(document.getElementById('editModal')).show();
         }
+
         async function updateItem() {
             const table = document.getElementById('edit-table').value;
             const id = parseInt(document.getElementById('edit-id').value);
@@ -751,12 +773,16 @@
             const details = document.getElementById('edit-details').value.trim();
             const is_promotion = document.getElementById('edit-promotion').checked;
             const is_out_of_stock = document.getElementById('edit-outofstock').checked;
+            const is_low_usage = document.getElementById('edit-lowusage').checked;
             const is_hidden = document.getElementById('edit-hidden').checked;
             const file = document.getElementById('edit-img').files[0];
             const currentImg = document.getElementById('edit-img-url').value;
             if (!name || isNaN(price)) return alert('Nombre y precio obligatorios');
             const img_url = file ? await uploadImage(file) : currentImg;
-            const { error } = await supabaseAdmin.from(table).update({ name, price, desc, details, img_url, is_promotion, is_out_of_stock, is_hidden }).eq('id', id);
+            const { error } = await supabaseAdmin.from(table).update({ 
+                name, price, desc, details, img_url, 
+                is_promotion, is_out_of_stock, is_low_usage, is_hidden 
+            }).eq('id', id);
             if (error) { alert('Error: ' + error.message); console.error(error); }
             else {
                 alert('¡Actualizado correctamente!');
@@ -764,6 +790,7 @@
                 loadAllItems();
             }
         }
+
         async function deleteItem(table, id) {
             if (!confirm('¿Estás seguro de eliminar este item?')) return;
             const { error } = await supabaseAdmin.from(table).delete().eq('id', id);
@@ -774,6 +801,7 @@
                 loadAllItems();
             }
         }
+
         function showSection(section) {
             document.querySelectorAll('#catalog-section, #details-section, #cart-section, #admin-section, #favorites-section')
                 .forEach(el => el.style.display = 'none');
@@ -802,8 +830,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
