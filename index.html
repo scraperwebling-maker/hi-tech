@@ -6,13 +6,68 @@
     <title>Hi Tech - Reparación y Venta de Celulares</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* --- 1. Letras azules → negras --- */
+        .text-primary { color: #000 !important; }
+
+        /* --- 2. Fondo atractivo / loop reparación celular --- */
+        body {
+            background: url("https://i.giphy.com/media/xTcnT2ZgWdR4IuSmkU/giphy-loop.mp4") no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* fallback imagen estática si el video no carga */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: url("https://images.unsplash.com/photo-1605397364399-05d9a4965b1b?auto=format&fit=crop&w=1920&q=80") center/cover no-repeat;
+            opacity: 0.25;
+        }
+
+        /* --- 6. Estilo iPhone translúcido --- */
+        .btn, .navbar, .card, .modal-content, .toast, .input-group-text, .form-control, .form-select {
+            background: rgba(255,255,255,0.25) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(255,255,255,0.35) !important;
+            color: #000 !important;
+            border-radius: 1rem !important;
+        }
+        .btn:hover { background: rgba(255,255,255,0.4) !important; }
+
+        /* otros ajustes visuales */
+        body { padding-bottom: 100px; }
+        .card { overflow: hidden; transition: all .3s ease; position: relative; }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,.25) !important; }
+        .card-img-top { height: 220px; object-fit: contain; background: #fff; padding: 15px; }
+        .details-img { height: 450px; object-fit: contain; background: #fff; padding: 20px; cursor: zoom-in; transition: transform .3s; }
+        .details-img:hover { transform: scale(1.02); }
+        .promotion-badge { position: absolute; top: 10px; left: 10px; z-index: 2; }
+        .outofstock-badge { position: absolute; top: 10px; right: 10px; z-index: 2; }
+        .heart-btn { cursor: pointer; transition: all .2s; }
+        .heart-active { color: red !important; transform: scale(1.2); }
+
+        @media (max-width: 768px) {
+            .display-5 { font-size: 2.5rem; }
+            .lead { font-size: 1.2rem; }
+            .card-img-top { height: 180px; }
+            .details-img { height: 300px; }
+        }
+        @media (max-width: 576px) {
+            .card-img-top { height: 150px; }
+            .details-img { height: 250px; }
+        }
+    </style>
 </head>
-<body style="background: url('https://jpgzkdydzfofhjeerjan.supabase.co/storage/v1/object/public/images/background.jpg') no-repeat center center fixed; background-size: cover; min-height: 100vh; overflow-x: hidden;">
+<body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: rgba(0, 123, 255, 0.95); backdrop-filter: blur(10px);">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(0,123,255,0.5); backdrop-filter: blur(10px);">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#" onclick="showSection('catalog')">
-                <img src="https://jpgzkdydzfofhjeerjan.supabase.co/storage/v1/object/public/images/logo_hitech.jpg" alt="Hi Tech Logo" class="rounded-circle me-2 shadow" style="height: 50px; width: 50px; object-fit: cover; background-color: black; border: 3px solid white;">
+                <img src="https://jpgzkdydzfofhjeerjan.supabase.co/storage/v1/object/public/images/logo_hitech.jpg" alt="Hi Tech Logo" class="rounded-circle me-2 shadow" style="height: 50px; width: 50px; object-fit: cover; background: #000; border: 3px solid #fff;">
                 <span class="fw-bold fs-4">Hi Tech</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -36,11 +91,11 @@
 
     <!-- Contenedor principal -->
     <div class="container mt-5 pt-5">
-        <div class="bg-light bg-opacity-95 rounded-4 shadow-lg p-4">
+        <div class="bg-light bg-opacity-75 rounded-4 shadow-lg p-4">
 
-            <!-- Hero Section (solo visible en catálogo) -->
-            <div id="hero-section" class="text-center py-5 mb-5 bg-primary text-white rounded-4 position-relative overflow-hidden">
-                <img src="https://jpgzkdydzfofhjeerjan.supabase.co/storage/v1/object/public/images/logo_hitech.jpg" alt="Hi Tech Logo" class="rounded-circle mb-4 shadow-lg" style="height: 180px; width: 180px; object-fit: cover; background-color: black; border: 6px solid white;">
+            <!-- Hero -->
+            <div id="hero-section" class="text-center py-5 mb-5 rounded-4 position-relative overflow-hidden">
+                <img src="https://jpgzkdydzfofhjeerjan.supabase.co/storage/v1/object/public/images/logo_hitech.jpg" alt="Hi Tech Logo" class="rounded-circle mb-4 shadow-lg" style="height: 180px; width: 180px; object-fit: cover; background: #000; border: 6px solid #fff;">
                 <h1 class="display-5 fw-bold">¡Bienvenido a Hi Tech!</h1>
                 <p class="lead fs-4">Reparación profesional y venta de celulares al mejor precio</p>
                 <p class="fs-5 mb-1"><i class="bi bi-phone"></i> +53 58452022</p>
@@ -50,9 +105,8 @@
                 <a href="#" class="btn btn-light btn-lg" onclick="showSection('catalog')"><i class="bi bi-shop"></i> Explorar Catálogo</a>
             </div>
 
-            <!-- Sección Catálogo -->
+            <!-- Catálogo -->
             <div id="catalog-section">
-                <!-- Búsqueda y ordenar -->
                 <div class="row mb-4 g-3">
                     <div class="col-12 col-md-8">
                         <div class="input-group">
@@ -63,7 +117,7 @@
                     <div class="col-12 col-md-4">
                         <select id="sort-select" class="form-select">
                             <option value="">Ordenar por...</option>
-                            <option value="price-asc">Precio: Bajo a Alto</option>
+                            <option value="price-asc" selected>Precio: Bajo a Alto</option>
                             <option value="price-desc">Precio: Alto a Bajo</option>
                             <option value="name-asc">Nombre A-Z</option>
                             <option value="name-desc">Nombre Z-A</option>
@@ -71,45 +125,45 @@
                     </div>
                 </div>
 
-                <!-- Promociones destacadas -->
                 <section id="promotions" class="mb-5">
-                    <h2 class="mb-4 text-primary fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Promociones Destacadas</h2>
+                    <h2 class="mb-4 fw-bold"><i class="bi bi-star-fill text-warning me-2"></i>Promociones Destacadas</h2>
                     <div id="promotion-list" class="row g-4"></div>
                 </section>
 
                 <section id="products">
-                    <h2 class="mb-4 text-primary fw-bold"><i class="bi bi-phone"></i> Productos (Teléfonos)</h2>
+                    <h2 class="mb-4 fw-bold"><i class="bi bi-phone"></i> Productos (Teléfonos)</h2>
                     <div id="product-list" class="row g-4"></div>
                 </section>
+
                 <section id="services" class="mt-5">
-                    <h2 class="mb-4 text-primary fw-bold"><i class="bi bi-wrench"></i> Servicios</h2>
+                    <h2 class="mb-4 fw-bold"><i class="bi bi-wrench"></i> Servicios</h2>
                     <div id="service-list" class="row g-4"></div>
                 </section>
             </div>
 
-            <!-- Sección Detalles -->
+            <!-- Detalles -->
             <div id="details-section" style="display:none;">
                 <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')"><i class="bi bi-arrow-left"></i> Volver al catálogo</a>
                 <div id="details" class="card shadow"></div>
             </div>
 
-            <!-- Sección Carrito -->
+            <!-- Carrito -->
             <div id="cart-section" style="display:none;">
                 <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')"><i class="bi bi-arrow-left"></i> Volver al catálogo</a>
-                <h2 class="mt-3 text-primary fw-bold"><i class="bi bi-cart"></i> Carrito de Compras</h2>
+                <h2 class="mt-3 fw-bold"><i class="bi bi-cart"></i> Carrito de Compras</h2>
                 <div id="cart-items" class="row g-4"></div>
-                <div id="cart-total" class="mt-4 text-end fs-4 fw-bold text-primary"></div>
+                <div id="cart-total" class="mt-4 text-end fs-4 fw-bold"></div>
                 <button id="buy-btn" class="btn btn-success btn-lg w-100 mt-3 shadow">Comprar por WhatsApp</button>
             </div>
 
-            <!-- Sección Favoritos -->
+            <!-- Favoritos -->
             <div id="favorites-section" style="display:none;">
                 <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')"><i class="bi bi-arrow-left"></i> Volver</a>
-                <h2 class="mt-3 text-primary fw-bold"><i class="bi bi-heart-fill text-danger"></i> Mis Favoritos</h2>
+                <h2 class="mt-3 fw-bold"><i class="bi bi-heart-fill text-danger"></i> Mis Favoritos</h2>
                 <div id="favorites-list" class="row g-4"></div>
             </div>
 
-            <!-- Sección Admin -->
+            <!-- Admin -->
             <div id="admin-section" style="display:none;">
                 <a href="#" class="btn btn-outline-secondary mb-3" onclick="showSection('catalog')">← Volver</a>
                 <div id="login-form">
@@ -122,10 +176,10 @@
                     </div>
                 </div>
                 <div id="admin-panel" style="display:none;">
-                    <h2 class="mt-4 text-primary fw-bold">Productos</h2>
+                    <h2 class="mt-4 fw-bold">Productos</h2>
                     <div id="admin-products" class="row g-4 mb-4"></div>
                     <button class="btn btn-info mb-5 shadow" data-bs-toggle="modal" data-bs-target="#addProductModal">Agregar Producto</button>
-                    <h2 class="text-primary fw-bold">Servicios</h2>
+                    <h2 class="fw-bold">Servicios</h2>
                     <div id="admin-services" class="row g-4 mb-4"></div>
                     <button class="btn btn-info shadow" data-bs-toggle="modal" data-bs-target="#addServiceModal">Agregar Servicio</button>
                 </div>
@@ -133,12 +187,12 @@
         </div>
     </div>
 
-    <!-- Botón WhatsApp flotante -->
+    <!-- WhatsApp flotante -->
     <a href="https://wa.me/5358452022" target="_blank" class="position-fixed bottom-0 end-0 p-4" style="z-index: 1050;">
         <i class="bi bi-whatsapp fs-1 text-white bg-success rounded-circle p-3 shadow-lg"></i>
     </a>
 
-    <!-- Toast notificación -->
+    <!-- Toast -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
         <div id="cart-toast" class="toast align-items-center text-bg-success border-0" role="alert">
             <div class="d-flex">
@@ -155,8 +209,7 @@
                 <div class="col-md-6 mb-4 mb-md-0">
                     <h5 class="fw-bold mb-4"><i class="bi bi-telephone-fill me-2"></i>Contacto</h5>
                     <p class="fs-5 mb-3"><i class="bi bi-phone me-2"></i><strong>+53 58452022</strong></p>
-
-                    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-clock-fill me-2"></i>Horario de Atención</h5>
+                    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-clock-fill me-2"></i>Horario</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><strong>Lunes:</strong> 8:30 a.m. – 5:30 p.m.</li>
                         <li class="mb-2"><strong>Martes:</strong> 8:30 a.m. – 5:30 p.m.</li>
@@ -166,9 +219,7 @@
                         <li class="mb-2"><strong>Sábado:</strong> 8:30 a.m. – 1:00 p.m.</li>
                         <li class="text-danger mb-2"><strong>Domingo:</strong> Cerrado</li>
                     </ul>
-
-                    <!-- Redes Sociales -->
-                    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-share-fill me-2"></i>Síguenos en Redes</h5>
+                    <h5 class="fw-bold mt-4 mb-3"><i class="bi bi-share-fill me-2"></i>Síguenos</h5>
                     <div class="d-flex flex-column gap-3">
                         <a href="https://www.instagram.com/hi.tech.electronica" target="_blank" class="text-white text-decoration-none d-flex align-items-center">
                             <i class="bi bi-instagram fs-3 me-3" style="background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
@@ -180,23 +231,14 @@
                         </a>
                     </div>
                 </div>
-
                 <div class="col-md-6">
-                    <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt-fill me-2"></i>Nuestra Ubicación</h5>
+                    <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt-fill me-2"></i>Ubicación</h5>
                     <div class="ratio ratio-16x9 rounded-4 shadow overflow-hidden">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1835.4747722428829!2d-82.3639513!3d23.062311299999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88cd7b109133da93%3A0x657c084d409f3171!2sHi-Tech%20Electr%C3%B3nica!5e0!3m2!1ses-419!2sus!4v1767125267486!5m2!1ses-419!2sus"
-                            style="border:0;"
-                            allowfullscreen=""
-                            loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1835.4747722428829!2d-82.3639513!3d23.062311299999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88cd7b109133da93%3A0x657c084d409f3171!2sHi-Tech%20Electr%C3%B3nica!5e0!3m2!1ses-419!2sus!4v1767125267486!5m2!1ses-419!2sus" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
             </div>
-
             <hr class="my-4">
-
             <p class="text-center mb-0 fs-6">© 2025 Hi Tech. Todos los derechos reservados.</p>
         </div>
     </footer>
@@ -213,7 +255,7 @@
         </div>
     </div>
 
-    <!-- Modales Admin (con nuevo checkbox "Agotado") -->
+    <!-- Modales Admin -->
     <div class="modal fade" id="addProductModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -232,6 +274,11 @@
                         <input type="checkbox" id="new-prod-outofstock" class="form-check-input">
                         <label class="form-check-label">Producto agotado</label>
                     </div>
+                    <!-- 4. Opción "No mostrar" -->
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="new-prod-hidden" class="form-check-input">
+                        <label class="form-check-label">No mostrar en catálogo</label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -240,6 +287,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="addServiceModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -258,6 +306,10 @@
                         <input type="checkbox" id="new-serv-outofstock" class="form-check-input">
                         <label class="form-check-label">Servicio no disponible</label>
                     </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="new-serv-hidden" class="form-check-input">
+                        <label class="form-check-label">No mostrar en catálogo</label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -266,6 +318,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="editModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -285,6 +338,10 @@
                         <input type="checkbox" id="edit-outofstock" class="form-check-input">
                         <label class="form-check-label">Agotado / No disponible</label>
                     </div>
+                    <div class="form-check mb-2">
+                        <input type="checkbox" id="edit-hidden" class="form-check-input">
+                        <label class="form-check-label">No mostrar en catálogo</label>
+                    </div>
                     <input type="hidden" id="edit-id">
                     <input type="hidden" id="edit-table">
                     <input type="hidden" id="edit-img-url">
@@ -296,30 +353,6 @@
             </div>
         </div>
     </div>
-
-    <!-- CSS personalizado -->
-    <style>
-        body { padding-bottom: 100px; overflow-x: hidden; }
-        .card { border-radius: 16px; overflow: hidden; transition: all 0.3s ease; position: relative; }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,.25) !important; }
-        .card-img-top { height: 220px; object-fit: contain !important; background-color: #fff; padding: 15px; }
-        .details-img { height: 450px; object-fit: contain !important; background-color: #fff; padding: 20px; cursor: zoom-in; transition: transform 0.3s; }
-        .details-img:hover { transform: scale(1.02); }
-        .promotion-badge { position: absolute; top: 10px; left: 10px; z-index: 2; }
-        .outofstock-badge { position: absolute; top: 10px; right: 10px; z-index: 2; }
-        .heart-btn { cursor: pointer; transition: all 0.2s; }
-        .heart-active { color: red !important; transform: scale(1.2); }
-        @media (max-width: 768px) {
-            .display-5 { font-size: 2.5rem; }
-            .lead { font-size: 1.2rem; }
-            .card-img-top { height: 180px; }
-            .details-img { height: 300px; }
-        }
-        @media (max-width: 576px) {
-            .card-img-top { height: 150px; }
-            .details-img { height: 250px; }
-        }
-    </style>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -342,7 +375,6 @@
             const count = cart.reduce((sum, i) => sum + i.qty, 0);
             document.getElementById('cart-count').textContent = count;
         }
-
         function displayCart() {
             const container = document.getElementById('cart-items');
             const totalEl = document.getElementById('cart-total');
@@ -376,7 +408,6 @@
             });
             totalEl.innerHTML = `<strong>Total: $${total.toFixed(2)}</strong>`;
         }
-
         function changeQty(index, delta) {
             cart[index].qty += delta;
             if (cart[index].qty <= 0) removeFromCart(index);
@@ -386,14 +417,12 @@
                 updateCartCount();
             }
         }
-
         function removeFromCart(index) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             displayCart();
             updateCartCount();
         }
-
         async function buyItems() {
             if (cart.length === 0) return alert('El carrito está vacío');
             const { data } = await supabasePublic.from('config').select('value').eq('key', 'wa_number').single();
@@ -417,7 +446,6 @@
         function updateFavoritesCount() {
             document.getElementById('favorites-count').textContent = favorites.length;
         }
-
         function toggleFavorite(type, id, name, price, img_url) {
             const key = `${type}-${id}`;
             const index = favorites.findIndex(f => f.key === key);
@@ -435,15 +463,17 @@
             await loadPromotions();
             filterAndSort();
         }
-
         async function loadItems(table, containerId, isPromotion = false) {
             const container = document.getElementById(containerId);
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
-            const query = isPromotion ? supabasePublic.from(table).select('*').eq('is_promotion', true) : supabasePublic.from(table).select('*');
-            const { data, error } = await query.order('id');
+            let query = isPromotion
+                ? supabasePublic.from(table).select('*').eq('is_promotion', true)
+                : supabasePublic.from(table).select('*');
+            const { data, error } = await query.order('price', { ascending: true }); // 5. Orden ascendente por precio
             if (error) { container.innerHTML = '<p class="text-danger">Error al cargar</p>'; console.error(error); return; }
             container.innerHTML = '';
             data.forEach(item => {
+                if (item.is_hidden) return; // 4. No mostrar si está oculto
                 const img = item.img_url || 'https://placehold.co/400x300?text=Sin+imagen';
                 const isFav = favorites.some(f => f.key === `${table}-${item.id}`);
                 const heartClass = isFav ? 'heart-active' : '';
@@ -459,7 +489,7 @@
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">${item.name}</h5>
                                 <p class="card-text flex-grow-1">${item.desc || ''}</p>
-                                <p class="card-text fw-bold text-primary fs-4">$${item.price}</p>
+                                <p class="card-text fw-bold fs-4">$${item.price}</p>
                                 <div class="mt-auto d-flex justify-content-between align-items-center">
                                     <button class="btn btn-primary" onclick="showDetails('${table}', ${item.id})" ${addToCartDisabled}>Ver detalles</button>
                                     <i class="bi bi-heart-fill heart-btn ${heartClass}" onclick="toggleFavorite('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${img}')"></i>
@@ -470,15 +500,12 @@
                 `;
             });
         }
-
         async function loadPromotions() {
             const container = document.getElementById('promotion-list');
-            container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
             container.innerHTML = '';
             await loadItems('products', 'promotion-list', true);
             await loadItems('services', 'promotion-list', true);
         }
-
         async function loadFavorites() {
             const container = document.getElementById('favorites-list');
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>';
@@ -491,14 +518,14 @@
                 const [type, idStr] = fav.key.split('-');
                 const id = parseInt(idStr);
                 const { data: item } = await supabasePublic.from(type).select('*').eq('id', id).single();
-                if (item) {
+                if (item && !item.is_hidden) {
                     container.innerHTML += `
                         <div class="col-12 col-sm-6 col-lg-4">
                             <div class="card h-100">
                                 <img src="${fav.img_url}" class="card-img-top" alt="${fav.name}">
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title">${fav.name}</h5>
-                                    <p class="card-text fw-bold text-primary fs-4">$${fav.price}</p>
+                                    <p class="card-text fw-bold fs-4">$${fav.price}</p>
                                     <button class="btn btn-primary mt-auto" onclick="showDetails('${type}', ${id})">Ver detalles</button>
                                 </div>
                             </div>
@@ -507,7 +534,6 @@
                 }
             }
         }
-
         function filterAndSort() {
             const search = (document.getElementById('search-input').value || '').toLowerCase();
             const sort = document.getElementById('sort-select').value;
@@ -531,7 +557,6 @@
                 });
             }
         }
-
         async function showDetails(type, id) {
             const { data: item, error } = await supabasePublic.from(type).select('*').eq('id', id).single();
             if (error || !item) { alert('Item no encontrado'); return; }
@@ -540,7 +565,7 @@
             const isFav = favorites.some(f => f.key === `${type}-${id}`);
             const heartClass = isFav ? 'heart-active' : '';
             const outOfStock = item.is_out_of_stock;
-            const addButton = outOfStock 
+            const addButton = outOfStock
                 ? '<button class="btn btn-secondary btn-lg w-100 shadow" disabled>Agotado</button><p class="text-center text-danger mt-2">Este producto está temporalmente agotado</p>'
                 : '<button class="btn btn-success btn-lg w-100 shadow" onclick="addToCart()">Agregar al Carrito</button>';
             document.getElementById('details').innerHTML = `
@@ -549,20 +574,19 @@
                     <h3 class="card-title d-flex justify-content-between align-items-center">${item.name}
                         <i class="bi bi-heart-fill heart-btn ${heartClass}" onclick="toggleFavorite('${type}', ${id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${imgSrc}')"></i>
                     </h3>
-                    <p class="fs-4 text-primary fw-bold">Precio: $${item.price}</p>
+                    <p class="fs-4 fw-bold">Precio: $${item.price}</p>
                     <p class="card-text">${item.details || 'Sin detalles adicionales'}</p>
                     ${outOfStock ? '' : '<div class="input-group mb-3 w-75 mx-auto"><span class="input-group-text">Cantidad</span><input type="number" id="qty" class="form-control" value="1" min="1"></div>'}
                     ${addButton}
                 </div>
             `;
             showSection('details');
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // 3. Mantiene vista arriba
         }
-
         function openZoomModal(src) {
             document.getElementById('zoomedImage').src = src;
             new bootstrap.Modal(document.getElementById('imageZoomModal')).show();
         }
-
         function addToCart() {
             if (!currentDetails || currentDetails.item.is_out_of_stock) return;
             toast.show();
@@ -588,16 +612,16 @@
                 alert('Contraseña incorrecta');
             }
         }
-
         async function loadAdminItems(table) {
             const container = document.getElementById(`admin-${table}`);
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div></div>';
-            const { data, error } = await supabaseAdmin.from(table).select('*').order('id');
+            const { data, error } = await supabaseAdmin.from(table).select('*').order('price', { ascending: true });
             if (error) { container.innerHTML = '<p class="text-danger">Error</p>'; console.error(error); return; }
             container.innerHTML = '';
             data.forEach(item => {
                 const promotionChecked = item.is_promotion ? 'checked' : '';
                 const outOfStockChecked = item.is_out_of_stock ? 'checked' : '';
+                const hiddenChecked = item.is_hidden ? 'checked' : '';
                 container.innerHTML += `
                     <div class="col-12 col-sm-6 col-lg-4">
                         <div class="card h-100">
@@ -613,8 +637,12 @@
                                     <input type="checkbox" class="form-check-input" disabled ${outOfStockChecked}>
                                     <label class="form-check-label">Agotado</label>
                                 </div>
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" class="form-check-input" disabled ${hiddenChecked}>
+                                    <label class="form-check-label">No mostrar</label>
+                                </div>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button class="btn btn-warning me-md-2" onclick="editItem('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${(item.desc || '').replace(/'/g, "\\'")}', '${(item.details || '').replace(/'/g, "\\'")}', '${item.img_url || ''}', ${item.is_promotion || false}, ${item.is_out_of_stock || false})">Editar</button>
+                                    <button class="btn btn-warning me-md-2" onclick="editItem('${table}', ${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${(item.desc || '').replace(/'/g, "\\'")}', '${(item.details || '').replace(/'/g, "\\'")}', '${item.img_url || ''}', ${item.is_promotion || false}, ${item.is_out_of_stock || false}, ${item.is_hidden || false})">Editar</button>
                                     <button class="btn btn-danger" onclick="deleteItem('${table}', ${item.id})">Eliminar</button>
                                 </div>
                             </div>
@@ -623,7 +651,6 @@
                 `;
             });
         }
-
         async function uploadImage(file) {
             if (!file) return null;
             const fileName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.]/g, '_');
@@ -632,7 +659,6 @@
             const { data } = supabaseAdmin.storage.from('images').getPublicUrl(fileName);
             return data.publicUrl;
         }
-
         async function addItem(table) {
             const prefix = table === 'products' ? 'prod' : 'serv';
             const name = document.getElementById(`new-${prefix}-name`).value.trim();
@@ -642,9 +668,10 @@
             const file = document.getElementById(`new-${prefix}-img`).files[0];
             const is_promotion = document.getElementById(`new-${prefix}-promotion`).checked;
             const is_out_of_stock = document.getElementById(`new-${prefix}-outofstock`).checked;
+            const is_hidden = document.getElementById(`new-${prefix}-hidden`).checked;
             if (!name || isNaN(price)) return alert('Nombre y precio son obligatorios');
             const img_url = file ? await uploadImage(file) : null;
-            const { error } = await supabaseAdmin.from(table).insert({ name, price, desc, details, img_url, is_promotion, is_out_of_stock });
+            const { error } = await supabaseAdmin.from(table).insert({ name, price, desc, details, img_url, is_promotion, is_out_of_stock, is_hidden });
             if (error) { alert('Error: ' + error.message); console.error(error); }
             else {
                 alert('¡Agregado correctamente!');
@@ -656,22 +683,22 @@
                 document.getElementById(`new-${prefix}-img`).value = '';
                 document.getElementById(`new-${prefix}-promotion`).checked = false;
                 document.getElementById(`new-${prefix}-outofstock`).checked = false;
+                document.getElementById(`new-${prefix}-hidden`).checked = false;
             }
         }
-
-        function editItem(table, id, name, price, desc, details, img_url, is_promotion, is_out_of_stock) {
+        function editItem(table, id, name, price, desc, details, img_url, is_promotion, is_out_of_stock, is_hidden) {
             document.getElementById('edit-name').value = name;
             document.getElementById('edit-price').value = price;
             document.getElementById('edit-desc').value = desc;
             document.getElementById('edit-details').value = details;
             document.getElementById('edit-promotion').checked = is_promotion;
             document.getElementById('edit-outofstock').checked = is_out_of_stock;
+            document.getElementById('edit-hidden').checked = is_hidden;
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-table').value = table;
             document.getElementById('edit-img-url').value = img_url;
             new bootstrap.Modal(document.getElementById('editModal')).show();
         }
-
         async function updateItem() {
             const table = document.getElementById('edit-table').value;
             const id = parseInt(document.getElementById('edit-id').value);
@@ -681,11 +708,12 @@
             const details = document.getElementById('edit-details').value.trim();
             const is_promotion = document.getElementById('edit-promotion').checked;
             const is_out_of_stock = document.getElementById('edit-outofstock').checked;
+            const is_hidden = document.getElementById('edit-hidden').checked;
             const file = document.getElementById('edit-img').files[0];
             const currentImg = document.getElementById('edit-img-url').value;
             if (!name || isNaN(price)) return alert('Nombre y precio obligatorios');
             const img_url = file ? await uploadImage(file) : currentImg;
-            const { error } = await supabaseAdmin.from(table).update({ name, price, desc, details, img_url, is_promotion, is_out_of_stock }).eq('id', id);
+            const { error } = await supabaseAdmin.from(table).update({ name, price, desc, details, img_url, is_promotion, is_out_of_stock, is_hidden }).eq('id', id);
             if (error) { alert('Error: ' + error.message); console.error(error); }
             else {
                 alert('¡Actualizado correctamente!');
@@ -693,7 +721,6 @@
                 loadAllItems();
             }
         }
-
         async function deleteItem(table, id) {
             if (!confirm('¿Estás seguro de eliminar este item?')) return;
             const { error } = await supabaseAdmin.from(table).delete().eq('id', id);
@@ -704,7 +731,6 @@
                 loadAllItems();
             }
         }
-
         function showSection(section) {
             document.querySelectorAll('#catalog-section, #details-section, #cart-section, #admin-section, #favorites-section')
                 .forEach(el => el.style.display = 'none');
@@ -717,6 +743,7 @@
                 loadAdminItems('products');
                 loadAdminItems('services');
             }
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // 3. Siempre arriba al cambiar
         }
 
         document.addEventListener('DOMContentLoaded', () => {
